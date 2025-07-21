@@ -1,15 +1,16 @@
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class Movement : MonoBehaviour
 {
+    [Header("Player")]
+    [SerializeField] private Transform player;
+
     private CharacterController controller;
     private PlayerInputActions inputActions;
     private Vector3 playerVelocity;
     private bool groundedPlayer;
 
-    [SerializeField] private ThirdPersonCamera cameraScript;
-    private bool wasMoving;
+    [SerializeField] public ThirdPersonCamera cameraScript;
 
 
     [Header("Jump & Gravity")]
@@ -97,6 +98,18 @@ public class Movement : MonoBehaviour
         playerVelocity.y += gravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
 
-      
+
+        if (inputActions.Player.Move.IsPressed())
+        {
+            playerRotateRealetivCamera();
+        }
+    }
+
+
+    private float r;
+    public void playerRotateRealetivCamera()
+    {
+        float angel = Mathf.SmoothDampAngle(player.eulerAngles.y, cameraScript.getYaw(), ref r, cameraScript.getCamSmoothTime()); // не получаю даные с скрипта
+        player.rotation = Quaternion.Euler(0, angel, 0);
     }
 }

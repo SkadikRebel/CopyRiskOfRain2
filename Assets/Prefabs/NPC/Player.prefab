@@ -72,6 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 884e5fbf4b1051742a7a81eba177b7ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraScript: {fileID: 0}
   jumpHeight: 1
   gravityValue: -9.81
   smoothInputSpeed: 0.2
@@ -230,6 +231,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 5014235771406734579}
+  lookAt: {fileID: 0}
   offset: {x: 0, y: 2, z: -5}
   rotationSpeed: 100
   smoothTime: 0.1

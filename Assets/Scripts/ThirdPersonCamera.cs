@@ -1,7 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
-using static UnityEngine.GraphicsBuffer;
 
 public class ThirdPersonCamera : MonoBehaviour
 {
@@ -11,8 +9,8 @@ public class ThirdPersonCamera : MonoBehaviour
 
     [Header("Camera Settings")]
     [SerializeField] private Vector3 offset = new Vector3(0, 2, -5);
-    [SerializeField] private float rotationSpeed = 100f;
-    [SerializeField] private float smoothTime = 0.1f;
+    [SerializeField] private float rotationSpeed = 50;
+    [SerializeField] private float smoothTime = 0.01f;
 
     [Header("Clamp Settings")]
     [SerializeField] public float minVerticalAngle = -90f;
@@ -31,6 +29,7 @@ public class ThirdPersonCamera : MonoBehaviour
     private Camera cam;
 
     private PlayerInputActions inputActions;
+
 
     private void Awake()
     {
@@ -65,32 +64,32 @@ public class ThirdPersonCamera : MonoBehaviour
         lookInput = context.ReadValue<Vector2>();
     }
 
+
     private void LateUpdate()
     {
         if (target == null) return;
 
         //Character rotation by mouse
 
-        if (inputActions.Player.Move.IsPressed())
-        {
-     
-            target.Rotate(0, (lookInput.x * rotationSpeed * Time.deltaTime), 0);
-        }
-
         yaw += lookInput.x * rotationSpeed * Time.deltaTime;
         pitch -= lookInput.y * rotationSpeed * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, minVerticalAngle, maxVerticalAngle);
 
+        //cam rotation
+        camRotate();
+
+        //zoom
+        cameraZoom();
+    }
+
+
+    public void camRotate()
+    {
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
         Vector3 desiredPosition = target.position + rotation * offset;
         transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref currentVelocity, smoothTime);
 
         transform.LookAt(target.position + Vector3.up * 1.5f);
-
-        //zoom
-
-        cameraZoom();
-
     }
 
     private void cameraZoom()
@@ -105,14 +104,7 @@ public class ThirdPersonCamera : MonoBehaviour
         }
     }
 
-    public void RotateCharacterToCameraDirection()
-    {
-        // Получаем forward в плоскости XZ от камеры
-        Vector3 cameraForward = target.forward;
-        cameraForward.y = 0f; // игнорируем вертикаль
-        cameraForward.Normalize();
+    public float getYaw() => yaw;
 
-        Quaternion targetRotation = Quaternion.LookRotation(cameraForward);
-        target.rotation = targetRotation;
-    }
+    public float getCamSmoothTime() => smoothTime;
 }
